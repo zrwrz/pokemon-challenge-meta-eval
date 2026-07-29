@@ -23,24 +23,9 @@ const state = {
 };
 
 const repository = {
-  api: "https://api.github.com/repos/zrwrz/pokemon-challenge-meta-eval/contents/meta-analysis?ref=main",
-  raw: "https://raw.githubusercontent.com/zrwrz/pokemon-challenge-meta-eval/main",
+  manifest:
+    "https://raw.githubusercontent.com/zrwrz/pokemon-challenge-meta-eval/main/gallery-manifest.json",
 };
-
-const dailyFigureTypes = [
-  ["power_board", "实力榜", "套牌强度与总体胜率"],
-  ["matchup", "对战矩阵", "主流套牌之间的优劣关系"],
-  ["meta_positioning", "环境定位", "使用率、强度与环境位置"],
-  ["best_counters", "最佳克制", "针对热门套牌的反制选择"],
-];
-
-const cumulativeFigureTypes = [
-  ["power_board_cumulative.png", "power_board", "实力榜", "累计窗口内的套牌强度与总体胜率"],
-  ["matchup_overall.png", "matchup", "对战矩阵", "累计窗口内的主流套牌优劣关系"],
-  ["meta_positioning_cumulative.png", "meta_positioning", "环境定位", "累计使用率、强度与环境位置"],
-  ["best_counters_cumulative.png", "best_counters", "最佳克制", "累计环境中的热门套牌反制选择"],
-  ["usage_trend.png", "usage_trend", "使用率趋势", "累计窗口内的套牌使用率变化"],
-];
 
 function splitDate(date) {
   const [year, month, day] = date.split("-").map(Number);
@@ -61,54 +46,13 @@ function availableForMode(entry, mode) {
 }
 
 async function discoverRemoteGallery() {
-  const response = await fetch(repository.api, {
-    headers: { Accept: "application/vnd.github+json" },
+  const response = await fetch(`${repository.manifest}?v=${Date.now()}`, {
+    cache: "no-store",
   });
   if (!response.ok) {
-    throw new Error(`GitHub directory request failed: ${response.status}`);
+    throw new Error(`Gallery manifest request failed: ${response.status}`);
   }
-
-  const contents = await response.json();
-  const directoryNames = contents
-    .filter((item) => item.type === "dir")
-    .map((item) => item.name);
-  const datePattern = /^\d{4}-\d{2}-\d{2}$/;
-  const rangePattern = /^(\d{4}-\d{2}-\d{2})_to_(\d{4}-\d{2}-\d{2})$/;
-  const dailyDates = directoryNames.filter((name) => datePattern.test(name));
-  const ranges = directoryNames
-    .map((name) => {
-      const match = name.match(rangePattern);
-      return match ? { name, startDate: match[1], endDate: match[2] } : null;
-    })
-    .filter(Boolean)
-    .sort((left, right) => left.startDate.localeCompare(right.startDate));
-  const dates = [...new Set([...dailyDates, ...ranges.map((range) => range.endDate)])]
-    .sort((left, right) => right.localeCompare(left));
-
-  return {
-    generatedAt: new Date().toISOString(),
-    dates: dates.map((date) => {
-      const hasDaily = dailyDates.includes(date);
-      const cumulativeRange = ranges.find((range) => range.endDate === date);
-      const daily = hasDaily
-        ? dailyFigureTypes.map(([key, title, caption]) => ({
-            key,
-            title,
-            caption,
-            src: `${repository.raw}/meta-analysis/${date}/figures/${key}_${date}.png`,
-          }))
-        : [];
-      const cumulative = cumulativeRange
-        ? cumulativeFigureTypes.map(([filename, key, title, caption]) => ({
-            key,
-            title,
-            caption,
-            src: `${repository.raw}/meta-analysis/${cumulativeRange.name}/figures/${filename}`,
-          }))
-        : [];
-      return { date, daily, cumulative };
-    }),
-  };
+  return response.json();
 }
 
 function renderDateControls() {

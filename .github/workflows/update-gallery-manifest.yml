@@ -1,0 +1,45 @@
+name: Update gallery manifest
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - "meta-analysis/**/figures/*.png"
+      - "meta-analysis/**/cumulative_figures/*.png"
+      - "scripts/build-site.mjs"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: gallery-manifest
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Rebuild manifest
+        run: npm run build
+
+      - name: Commit manifest when changed
+        shell: bash
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add gallery-manifest.json
+          if git diff --cached --quiet; then
+            echo "Gallery manifest is already current."
+            exit 0
+          fi
+          git commit -m "update gallery manifest [skip ci]"
+          git push

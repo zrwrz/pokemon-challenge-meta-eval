@@ -5,6 +5,8 @@ import { fileURLToPath } from "node:url";
 const root = path.resolve(path.dirname(fileURLToPath(import.meta.url)), "..");
 const analysisRoot = path.join(root, "meta-analysis");
 const outputRoot = path.join(root, "dist");
+const publicImageRoot =
+  "https://raw.githubusercontent.com/zrwrz/pokemon-challenge-meta-eval/main";
 const datePattern = /^\d{4}-\d{2}-\d{2}$/;
 const cumulativeRangePattern =
   /^(\d{4}-\d{2}-\d{2})_to_(\d{4}-\d{2}-\d{2})$/;
@@ -171,13 +173,35 @@ for (const date of dates) {
   });
 }
 
+const generatedAt = `${dates[0]}T00:00:00.000Z`;
+const siteData = { generatedAt, dates: entries };
+const publicData = {
+  generatedAt,
+  dates: entries.map((entry) => ({
+    date: entry.date,
+    daily: entry.daily.map(({ sourcePath, ...figure }) => ({
+      ...figure,
+      src: `${publicImageRoot}/${sourcePath}`,
+    })),
+    cumulative: entry.cumulative.map(({ sourcePath, ...figure }) => ({
+      ...figure,
+      src: `${publicImageRoot}/${sourcePath}`,
+    })),
+  })),
+};
+
 await Promise.all([
   copyFile(path.join(root, "index.html"), path.join(outputRoot, "index.html")),
   copyFile(path.join(root, "styles.css"), path.join(outputRoot, "styles.css")),
   copyFile(path.join(root, "app.js"), path.join(outputRoot, "app.js")),
   writeFile(
     path.join(outputRoot, "site-data.json"),
-    JSON.stringify({ generatedAt: new Date().toISOString(), dates: entries }),
+    JSON.stringify(siteData),
+    "utf8",
+  ),
+  writeFile(
+    path.join(root, "gallery-manifest.json"),
+    JSON.stringify(publicData),
     "utf8",
   ),
   writeFile(path.join(outputRoot, ".nojekyll"), "", "utf8"),
