@@ -1,21 +1,35 @@
-# PokéMeta · 宝可梦对战图鉴
+# PokéMeta · Daily Meta Decks Evaluation
 
-用于展示 Pokémon Challenge 对战环境分析图片的静态网站。
+A static visual archive for Pokémon Challenge deck meta analysis.
 
-## 在线访问
+## Live Website
 
 <https://zrwrz.github.io/pokemon-challenge-meta-analysis/>
 
-## 主要功能
+## Features
 
-- 支持“单日”和“累计”两种查看模式；
-- 可按日期切换分析结果；
-- 单日模式在同一页面展示四张分析图；
-- 支持点击图片放大查看，并适配手机与桌面端。
+- Daily and cumulative report modes;
+- Date selection for daily reports;
+- Start-to-end date ranges for cumulative reports;
+- Four daily analysis figures displayed on one page;
+- Full-size image viewing on desktop and mobile;
+- Automatic gallery updates after new analysis figures are pushed.
 
-## 更新数据
+## Adding New Reports
 
-将新的分析图片放入 `meta-analysis` 下对应的日期目录，然后提交并推送：
+Daily reports use the following directory structure:
+
+```text
+meta-analysis/YYYY-MM-DD/figures/
+```
+
+Cumulative reports use a start-to-end date range:
+
+```text
+meta-analysis/YYYY-MM-DD_to_YYYY-MM-DD/figures/
+```
+
+After adding the new figures, commit and push them:
 
 ```bash
 git add meta-analysis
@@ -23,12 +37,12 @@ git commit -m "add new meta analysis"
 git push origin main
 ```
 
-推送后，日期清单会自动更新，GitHub Pages 通常需要一两分钟完成刷新。
+The gallery manifest is rebuilt automatically. GitHub Pages may take a minute or two to refresh.
 
-## 本地预览
+## Local Preview
 
 ```bash
 npm run dev
 ```
 
-然后访问 <http://127.0.0.1:4173/>。
+Then open <http://127.0.0.1:4173/>.
