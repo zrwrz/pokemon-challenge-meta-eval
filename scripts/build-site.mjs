@@ -13,24 +13,24 @@ const cumulativeRangePattern =
 
 const figureCopy = {
   power_board: {
-    title: "实力榜",
-    caption: "套牌强度与总体胜率",
+    title: "Power Board",
+    caption: "Deck strength and overall win rate",
   },
   matchup: {
-    title: "对战矩阵",
-    caption: "主流套牌之间的优劣关系",
+    title: "Matchup Matrix",
+    caption: "Advantages and disadvantages among leading decks",
   },
   meta_positioning: {
-    title: "环境定位",
-    caption: "使用率、强度与环境位置",
+    title: "Meta Positioning",
+    caption: "Usage, strength, and position in the field",
   },
   best_counters: {
-    title: "最佳克制",
-    caption: "针对热门套牌的反制选择",
+    title: "Best Counters",
+    caption: "Counter choices for the most popular decks",
   },
   usage_trend: {
-    title: "使用率趋势",
-    caption: "累计窗口内的套牌使用率变化",
+    title: "Usage Trend",
+    caption: "Deck usage changes across the cumulative window",
   },
 };
 
@@ -72,7 +72,7 @@ async function collectFigures({ date, mode, sourceDirectory, sourceWebDirectory 
     figures.push({
       key,
       title: figureCopy[key]?.title ?? file.replace(/\.png$/i, ""),
-      caption: figureCopy[key]?.caption ?? "对战分析图",
+      caption: figureCopy[key]?.caption ?? "Meta analysis report",
       src: `meta-analysis/${mode}/${date}/${file}`,
       sourcePath: `${sourceWebDirectory}/${file}`,
     });
@@ -128,7 +128,7 @@ const dates = [
 ].sort((a, b) => b.localeCompare(a));
 
 if (dates.length === 0) {
-  throw new Error("meta-analysis 中没有找到 YYYY-MM-DD 格式的日期目录。");
+  throw new Error("No YYYY-MM-DD analysis directories were found.");
 }
 
 const entries = [];
@@ -140,7 +140,7 @@ for (const date of dates) {
     sourceWebDirectory: `meta-analysis/${date}/figures`,
   });
 
-  // 累计图优先识别生成器使用的 START_to_END/figures 目录。
+  // Prefer the generator's START_to_END/figures directory for cumulative reports.
   const matchingRange = cumulativeRanges.find((range) => range.endDate === date);
   const rangeCumulative = matchingRange
     ? path.join(analysisRoot, matchingRange.name, "figures")

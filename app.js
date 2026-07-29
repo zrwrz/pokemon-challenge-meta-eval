@@ -34,7 +34,13 @@ function splitDate(date) {
 
 function formatDate(date, full = true) {
   const { year, month, day } = splitDate(date);
-  return full ? `${year}年${month}月${day}日` : `${month}.${String(day).padStart(2, "0")}`;
+  const value = new Date(Date.UTC(year, month - 1, day));
+  return new Intl.DateTimeFormat("en-US", {
+    month: full ? "long" : "short",
+    day: "numeric",
+    ...(full ? { year: "numeric" } : {}),
+    timeZone: "UTC",
+  }).format(value);
 }
 
 function selectedEntry() {
@@ -58,7 +64,7 @@ async function discoverRemoteGallery() {
 function renderDateControls() {
   elements.dateSelect.innerHTML = state.data.dates
     .map((entry) => {
-      const dailyMark = availableForMode(entry, "daily") ? "" : "（无单日图）";
+      const dailyMark = availableForMode(entry, "daily") ? "" : " (no daily figures)";
       return `<option value="${entry.date}">${formatDate(entry.date)}${dailyMark}</option>`;
     })
     .join("");
@@ -68,7 +74,7 @@ function renderDateControls() {
       const { year, month, day } = splitDate(entry.date);
       const hasDaily = availableForMode(entry, "daily");
       const hasCumulative = availableForMode(entry, "cumulative");
-      const badge = hasDaily && hasCumulative ? "双模式" : hasDaily ? "单日" : "累计";
+      const badge = hasDaily && hasCumulative ? "Both" : hasDaily ? "Daily" : "Cumulative";
       return `
         <button
           class="date-chip${index === 0 ? " is-active" : ""}"
@@ -95,10 +101,12 @@ function renderGallery() {
   elements.galleryEyebrow.textContent = isDaily
     ? "DAILY FIELD REPORT"
     : "CUMULATIVE FIELD REPORT";
-  elements.galleryTitle.textContent = isDaily ? "单日环境图集" : "累计环境图集";
+  elements.galleryTitle.textContent = isDaily
+    ? "Daily meta gallery"
+    : "Cumulative meta gallery";
   elements.galleryDescription.textContent = isDaily
-    ? "四张战报同页呈现，点击任意图片可放大查看完整细节。"
-    : `展示截至 ${formatDate(state.date)} 生成的累计分析图。`;
+    ? "All four reports are shown together. Select any image to inspect it at full size."
+    : `Cumulative reports generated through ${formatDate(state.date)}.`;
 
   const empty = figures.length === 0;
   elements.gallery.classList.toggle("is-hidden", empty);
@@ -106,11 +114,11 @@ function renderGallery() {
 
   if (empty) {
     elements.emptyTitle.textContent = isDaily
-      ? "这一天还没有单日分析图"
-      : "这一天还没有累计分析图";
+      ? "No daily report for this date"
+      : "No cumulative report for this date";
     elements.emptyMessage.textContent = isDaily
-      ? `请将图片放入 meta-analysis/${state.date}/figures 后重新部署。`
-      : `请将图片放入 meta-analysis/cumulative/${state.date}/figures 后重新部署。`;
+      ? `Add figures to meta-analysis/${state.date}/figures and push the update.`
+      : "Add the matching cumulative figures and push the update.";
     elements.gallery.innerHTML = "";
     return;
   }
@@ -131,14 +139,14 @@ function renderGallery() {
             type="button"
             data-image="${figure.src}"
             data-title="${figure.title} · ${formatDate(state.date)}"
-            aria-label="打开${figure.title}大图"
+            aria-label="Open ${figure.title} at full size"
           >
             <img
               src="${figure.src}"
               alt="${formatDate(state.date)} ${figure.title}"
               ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}
             />
-            <span>查看大图 ↗</span>
+            <span>View full size ↗</span>
           </button>
         </article>
       `,
@@ -215,13 +223,13 @@ async function initialize() {
     setMode(state.mode);
     bindEvents();
 
-    const updated = new Date(state.data.generatedAt);
     elements.updatedAt.textContent =
-      `图集生成于 ${updated.toLocaleString("zh-CN", { hour12: false })}`;
+      `Data available through ${formatDate(state.data.dates[0].date)}`;
     requestAnimationFrame(() => elements.loading.classList.add("is-ready"));
   } catch (error) {
     console.error(error);
-    elements.loading.querySelector("p").textContent = "图集载入失败，请稍后重试。";
+    elements.loading.querySelector("p").textContent =
+      "The gallery could not be loaded. Please try again.";
   }
 }
 

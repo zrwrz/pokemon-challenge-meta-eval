@@ -327,8 +327,7 @@ button {
 }
 
 .viewer h2,
-.section-heading h2,
-.trainer-note h2 {
+.section-heading h2 {
   margin: 0;
   font-family: var(--display);
   font-size: clamp(1.8rem, 3vw, 2.65rem);
@@ -635,63 +634,6 @@ button {
   font-size: 0.8rem;
 }
 
-.trainer-note {
-  position: relative;
-  display: grid;
-  grid-template-columns: auto minmax(0, 1fr) auto;
-  align-items: center;
-  gap: 25px;
-  margin-bottom: 80px;
-  padding: 32px;
-  overflow: hidden;
-  border: 1px solid rgba(244, 200, 68, 0.42);
-  border-radius: 24px;
-  background: rgba(244, 200, 68, 0.13);
-}
-
-.note-index {
-  align-self: start;
-  padding: 6px 9px;
-  border-radius: 6px;
-  color: var(--red-deep);
-  background: rgba(228, 71, 63, 0.09);
-  font-family: var(--display);
-  font-size: 0.62rem;
-  font-weight: 900;
-}
-
-.trainer-note h2 {
-  font-size: 1.75rem;
-}
-
-.trainer-note p:last-child {
-  max-width: 810px;
-  margin: 8px 0 0;
-  color: var(--muted);
-  font-size: 0.8rem;
-  line-height: 1.75;
-}
-
-.mini-balls {
-  display: flex;
-  gap: 8px;
-}
-
-.mini-balls i {
-  width: 10px;
-  height: 10px;
-  border-radius: 50%;
-  background: var(--red);
-}
-
-.mini-balls i:nth-child(2) {
-  background: var(--blue);
-}
-
-.mini-balls i:nth-child(3) {
-  background: var(--yellow);
-}
-
 footer {
   display: flex;
   align-items: center;
@@ -916,16 +858,6 @@ footer strong {
   .empty-state {
     grid-template-columns: 1fr;
     min-height: 300px;
-  }
-
-  .trainer-note {
-    grid-template-columns: 1fr;
-  }
-
-  .mini-balls {
-    position: absolute;
-    right: 24px;
-    top: 26px;
   }
 
   footer {
