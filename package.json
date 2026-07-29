@@ -1,0 +1,10 @@
+{
+  "name": "pokemon-challenge-meta-analysis",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build": "node scripts/build-site.mjs",
+    "dev": "node scripts/build-site.mjs && node scripts/serve.mjs"
+  }
+}

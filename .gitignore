@@ -1,0 +1,12 @@
+dist/
+node_modules/
+.DS_Store
+.pages-publish-worktree/
+
+# 网页只发布最终分析图，不提交 CSV、JSON 或 PDF 原始数据。
+meta-analysis/**
+!meta-analysis/**/
+!meta-analysis/**/figures/
+!meta-analysis/**/figures/*.png
+!meta-analysis/**/cumulative_figures/
+!meta-analysis/**/cumulative_figures/*.png

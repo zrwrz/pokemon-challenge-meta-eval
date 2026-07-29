@@ -1,0 +1,166 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="description"
+      content="PokéMeta 宝可梦卡牌对战环境图集，按日期查看每日与累计分析。"
+    />
+    <meta name="theme-color" content="#e4473f" />
+    <meta property="og:title" content="PokéMeta · 宝可梦对战图鉴" />
+    <meta property="og:description" content="按日期探索每日与累计的宝可梦对战环境图集。" />
+    <meta property="og:type" content="website" />
+    <meta
+      property="og:url"
+      content="https://zrwrz.github.io/pokemon-challenge-meta-analysis/"
+    />
+    <link
+      rel="canonical"
+      href="https://zrwrz.github.io/pokemon-challenge-meta-analysis/"
+    />
+    <title>PokéMeta · 宝可梦对战图鉴</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./app.js" type="module"></script>
+  </head>
+  <body>
+    <div class="page">
+      <header class="site-header">
+        <a class="brand" href="./" aria-label="PokéMeta 首页">
+          <span class="pokeball pokeball--logo" aria-hidden="true"></span>
+          <span class="brand-copy">
+            <strong>PokéMeta</strong>
+            <small>对战图鉴</small>
+          </span>
+        </a>
+        <div class="online-status">
+          <i aria-hidden="true"></i>
+          <span>图鉴已连接</span>
+        </div>
+      </header>
+
+      <main>
+        <section class="hero">
+          <div class="hero-copy">
+            <p class="eyebrow">TRAINER META ARCHIVE</p>
+            <h1>每一天的环境，<br /><em>都值得被看见。</em></h1>
+            <p class="hero-text">
+              选择日期，翻阅当日的四项完整战报。累计趋势与单日变化，
+              都收进这一册训练家图鉴。
+            </p>
+          </div>
+
+          <div class="hero-art" aria-hidden="true">
+            <div class="orbit orbit--outer"></div>
+            <div class="orbit orbit--inner"></div>
+            <span class="pokeball pokeball--hero"></span>
+            <i class="spark spark--one"></i>
+            <i class="spark spark--two"></i>
+            <i class="spark spark--three"></i>
+          </div>
+        </section>
+
+        <section class="viewer" aria-labelledby="viewerTitle">
+          <div class="viewer-top">
+            <div>
+              <p class="eyebrow">BATTLE REPORT</p>
+              <h2 id="viewerTitle">选择你的查看方式</h2>
+            </div>
+            <div class="mode-switch" role="group" aria-label="分析模式">
+              <button class="mode-button" type="button" data-mode="cumulative">
+                <span>累计</span>
+                <small>截至所选日期</small>
+              </button>
+              <button
+                class="mode-button is-active"
+                type="button"
+                data-mode="daily"
+                aria-pressed="true"
+              >
+                <span>单日</span>
+                <small>当天四项战报</small>
+              </button>
+            </div>
+          </div>
+
+          <div class="date-picker">
+            <div class="date-title">
+              <span>当前日期</span>
+              <strong id="selectedDateLabel">正在载入…</strong>
+            </div>
+            <label class="select-label">
+              <span class="sr-only">选择日期</span>
+              <select id="dateSelect" aria-label="选择日期"></select>
+            </label>
+          </div>
+
+          <div class="date-rail" id="dateRail" aria-label="全部可用日期"></div>
+        </section>
+
+        <section class="gallery-section" aria-live="polite">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow" id="galleryEyebrow">DAILY FIELD REPORT</p>
+              <h2 id="galleryTitle">单日环境图集</h2>
+            </div>
+            <p id="galleryDescription">
+              四张战报同页呈现，点击任意图片可放大查看完整细节。
+            </p>
+          </div>
+
+          <div class="gallery" id="gallery"></div>
+
+          <div class="empty-state is-hidden" id="emptyState">
+            <span class="pokeball pokeball--empty" aria-hidden="true"></span>
+            <div>
+              <p class="eyebrow">REPORT NOT FOUND</p>
+              <h3 id="emptyTitle">这一天还没有累计分析图</h3>
+              <p id="emptyMessage">
+                将图片放入约定的累计目录并重新部署后，这里会自动出现。
+              </p>
+            </div>
+          </div>
+        </section>
+
+        <aside class="trainer-note">
+          <span class="note-index">NO. 001</span>
+          <div>
+            <p class="eyebrow">TRAINER'S NOTE</p>
+            <h2>图片即报告，一页看完。</h2>
+            <p>
+              页面不会重复铺陈表格或原始数据，只保留分析生成的最终图片，
+              让结论更直接，也更适合在电脑和手机上快速浏览。
+            </p>
+          </div>
+          <span class="mini-balls" aria-hidden="true">
+            <i></i><i></i><i></i>
+          </span>
+        </aside>
+      </main>
+
+      <footer>
+        <div>
+          <strong>PokéMeta</strong>
+          <span>选择日期，打开你的环境图鉴。</span>
+        </div>
+        <p id="updatedAt">正在读取更新时间…</p>
+      </footer>
+    </div>
+
+    <dialog class="lightbox" id="lightbox">
+      <button class="lightbox-close" type="button" aria-label="关闭大图">×</button>
+      <div class="lightbox-content">
+        <div>
+          <p class="eyebrow">FULL SIZE REPORT</p>
+          <h2 id="lightboxTitle"></h2>
+        </div>
+        <img id="lightboxImage" alt="" />
+      </div>
+    </dialog>
+
+    <div class="loading" id="loading" role="status">
+      <span class="pokeball pokeball--loading" aria-hidden="true"></span>
+      <p>正在翻开对战图鉴…</p>
+    </div>
+  </body>
+</html>
