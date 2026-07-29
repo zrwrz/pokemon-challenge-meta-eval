@@ -2,6 +2,7 @@ const elements = {
   loading: document.querySelector("#loading"),
   dateSelect: document.querySelector("#dateSelect"),
   dateRail: document.querySelector("#dateRail"),
+  dateContextLabel: document.querySelector("#dateContextLabel"),
   selectedDateLabel: document.querySelector("#selectedDateLabel"),
   gallery: document.querySelector("#gallery"),
   galleryEyebrow: document.querySelector("#galleryEyebrow"),
@@ -51,6 +52,27 @@ function availableForMode(entry, mode) {
   return Array.isArray(entry?.[mode]) && entry[mode].length > 0;
 }
 
+function entriesForMode() {
+  return state.data.dates.filter((entry) => availableForMode(entry, state.mode));
+}
+
+function formatRange(entry) {
+  const range = entry?.cumulativeRange ?? {
+    startDate: entry?.date,
+    endDate: entry?.date,
+  };
+  if (!range.startDate || !range.endDate) return "Date range unavailable";
+  if (range.startDate === range.endDate) return formatDate(range.endDate);
+
+  const start = splitDate(range.startDate);
+  const end = splitDate(range.endDate);
+  const startLabel = formatDate(range.startDate, false);
+  const endLabel = formatDate(range.endDate, false);
+  return start.year === end.year
+    ? `${startLabel} – ${endLabel}, ${end.year}`
+    : `${formatDate(range.startDate)} – ${formatDate(range.endDate)}`;
+}
+
 async function discoverRemoteGallery() {
   const response = await fetch(`${repository.manifest}?v=${Date.now()}`, {
     cache: "no-store",
@@ -62,30 +84,39 @@ async function discoverRemoteGallery() {
 }
 
 function renderDateControls() {
-  elements.dateSelect.innerHTML = state.data.dates
+  const entries = entriesForMode();
+  const isDaily = state.mode === "daily";
+  elements.dateContextLabel.textContent = isDaily ? "Selected date" : "Selected range";
+
+  elements.dateSelect.innerHTML = entries
     .map((entry) => {
-      const dailyMark = availableForMode(entry, "daily") ? "" : " (no daily figures)";
-      return `<option value="${entry.date}">${formatDate(entry.date)}${dailyMark}</option>`;
+      const label = isDaily ? formatDate(entry.date) : formatRange(entry);
+      return `<option value="${entry.date}">${label}</option>`;
     })
     .join("");
 
-  elements.dateRail.innerHTML = state.data.dates
-    .map((entry, index) => {
-      const { year, month, day } = splitDate(entry.date);
-      const hasDaily = availableForMode(entry, "daily");
-      const hasCumulative = availableForMode(entry, "cumulative");
-      const badge = hasDaily && hasCumulative ? "Both" : hasDaily ? "Daily" : "Cumulative";
+  elements.dateRail.innerHTML = entries
+    .map((entry) => {
+      const { year } = splitDate(entry.date);
+      const active = entry.date === state.date;
+      const range = entry.cumulativeRange;
+      const mainLabel = isDaily
+        ? formatDate(entry.date, false)
+        : formatDate(range?.startDate ?? entry.date, false);
+      const subLabel = isDaily
+        ? `${year} · Daily`
+        : `to ${formatDate(range?.endDate ?? entry.date, false)}, ${splitDate(range?.endDate ?? entry.date).year}`;
       return `
         <button
-          class="date-chip${index === 0 ? " is-active" : ""}"
+          class="date-chip${active ? " is-active" : ""}"
           type="button"
           data-date="${entry.date}"
-          aria-pressed="${index === 0}"
+          aria-pressed="${active}"
         >
           <i aria-hidden="true"></i>
           <span>
-            <strong>${month}.${String(day).padStart(2, "0")}</strong>
-            <small>${year} · ${badge}</small>
+            <strong>${mainLabel}</strong>
+            <small>${subLabel}</small>
           </span>
         </button>
       `;
@@ -106,7 +137,7 @@ function renderGallery() {
     : "Cumulative meta gallery";
   elements.galleryDescription.textContent = isDaily
     ? "All four reports are shown together. Select any image to inspect it at full size."
-    : `Cumulative reports generated through ${formatDate(state.date)}.`;
+    : `Reports covering ${formatRange(entry)}.`;
 
   const empty = figures.length === 0;
   elements.gallery.classList.toggle("is-hidden", empty);
@@ -138,12 +169,12 @@ function renderGallery() {
             class="image-button"
             type="button"
             data-image="${figure.src}"
-            data-title="${figure.title} · ${formatDate(state.date)}"
+            data-title="${figure.title} · ${isDaily ? formatDate(state.date) : formatRange(entry)}"
             aria-label="Open ${figure.title} at full size"
           >
             <img
               src="${figure.src}"
-              alt="${formatDate(state.date)} ${figure.title}"
+              alt="${isDaily ? formatDate(state.date) : formatRange(entry)} ${figure.title}"
               ${index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'}
             />
             <span>View full size ↗</span>
@@ -157,7 +188,8 @@ function renderGallery() {
 function setDate(date) {
   state.date = date;
   elements.dateSelect.value = date;
-  elements.selectedDateLabel.textContent = formatDate(date);
+  elements.selectedDateLabel.textContent =
+    state.mode === "daily" ? formatDate(date) : formatRange(selectedEntry());
 
   document.querySelectorAll(".date-chip").forEach((button) => {
     const active = button.dataset.date === date;
@@ -174,7 +206,17 @@ function setMode(mode) {
     button.classList.toggle("is-active", active);
     button.setAttribute("aria-pressed", String(active));
   });
-  renderGallery();
+  const entries = entriesForMode();
+  if (!entries.some((entry) => entry.date === state.date)) {
+    state.date = entries[0]?.date ?? null;
+  }
+  renderDateControls();
+  if (state.date) {
+    setDate(state.date);
+  } else {
+    elements.selectedDateLabel.textContent = "No reports available";
+    renderGallery();
+  }
 }
 
 function openLightbox(button) {
@@ -218,10 +260,8 @@ async function initialize() {
     if (!state.data.dates?.length) throw new Error("No dates available");
 
     state.date = state.data.dates[0].date;
-    renderDateControls();
-    setDate(state.date);
-    setMode(state.mode);
     bindEvents();
+    setMode(state.mode);
 
     elements.updatedAt.textContent =
       `Data available through ${formatDate(state.data.dates[0].date)}`;

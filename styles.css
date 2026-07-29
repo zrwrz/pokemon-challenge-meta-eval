@@ -117,48 +117,13 @@ button {
   height: 44px;
 }
 
-.online-status {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  padding: 8px 13px;
-  border: 1px solid rgba(54, 165, 140, 0.25);
-  border-radius: 999px;
-  color: #287664;
-  background: rgba(255, 255, 255, 0.52);
-  font-size: 0.72rem;
-  font-weight: 800;
-}
-
-.online-status i {
-  width: 8px;
-  height: 8px;
-  border-radius: 50%;
-  background: var(--green);
-  box-shadow: 0 0 0 4px rgba(54, 165, 140, 0.13);
-}
-
 .hero {
   position: relative;
   display: grid;
   grid-template-columns: minmax(0, 1.2fr) minmax(330px, 0.8fr);
   align-items: center;
-  min-height: 510px;
+  min-height: 420px;
   overflow: hidden;
-}
-
-.hero::after {
-  content: "META";
-  position: absolute;
-  right: -1rem;
-  bottom: -4.5rem;
-  color: rgba(23, 34, 59, 0.035);
-  font-family: var(--display);
-  font-size: clamp(10rem, 21vw, 22rem);
-  font-weight: 900;
-  line-height: 0.8;
-  letter-spacing: -0.08em;
-  pointer-events: none;
 }
 
 .hero-copy {
@@ -179,7 +144,7 @@ button {
   max-width: 900px;
   margin: 0;
   font-family: var(--display);
-  font-size: clamp(3.3rem, 7vw, 7.1rem);
+  font-size: clamp(3.1rem, 6vw, 6rem);
   font-weight: 900;
   line-height: 0.92;
   letter-spacing: -0.065em;
@@ -201,7 +166,7 @@ button {
 .hero-art {
   position: relative;
   z-index: 1;
-  width: min(35vw, 460px);
+  width: min(30vw, 340px);
   aspect-ratio: 1;
   justify-self: center;
 }
@@ -216,45 +181,9 @@ button {
   inset: 0;
 }
 
-.orbit--inner {
-  inset: 15%;
-  border-style: dashed;
-  animation: orbit-spin 28s linear infinite;
-}
-
-.orbit--outer::before,
-.orbit--outer::after,
-.orbit--inner::before {
-  content: "";
-  position: absolute;
-  width: 12px;
-  height: 12px;
-  border: 4px solid var(--paper);
-  border-radius: 50%;
-  background: var(--blue);
-  box-shadow: 0 0 0 1px rgba(23, 34, 59, 0.12);
-}
-
-.orbit--outer::before {
-  top: 11%;
-  left: 14%;
-}
-
-.orbit--outer::after {
-  right: 3%;
-  bottom: 27%;
-  background: var(--yellow);
-}
-
-.orbit--inner::before {
-  bottom: 12%;
-  left: 2%;
-  background: var(--red);
-}
-
 .pokeball--hero {
   position: absolute;
-  inset: 25%;
+  inset: 24%;
   border-width: 11px;
   box-shadow: 0 35px 70px rgba(200, 50, 53, 0.26);
   animation: ball-float 5s ease-in-out infinite;
@@ -262,40 +191,6 @@ button {
 
 .pokeball--hero::after {
   border-width: 8px;
-}
-
-.spark {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  background: var(--yellow);
-  clip-path: polygon(50% 0, 61% 36%, 100% 50%, 61% 64%, 50% 100%, 39% 64%, 0 50%, 39% 36%);
-}
-
-.spark--one {
-  top: 20%;
-  right: 15%;
-}
-
-.spark--two {
-  bottom: 17%;
-  left: 11%;
-  width: 12px;
-  height: 12px;
-}
-
-.spark--three {
-  top: 48%;
-  left: 2%;
-  width: 9px;
-  height: 9px;
-  background: var(--blue);
-}
-
-@keyframes orbit-spin {
-  to {
-    transform: rotate(360deg);
-  }
 }
 
 @keyframes ball-float {
@@ -311,11 +206,11 @@ button {
 .viewer {
   position: relative;
   z-index: 3;
-  padding: 33px;
+  padding: 28px;
   border: 1px solid rgba(23, 34, 59, 0.09);
   border-radius: 27px;
   background: rgba(255, 253, 248, 0.88);
-  box-shadow: var(--shadow);
+  box-shadow: 0 14px 38px rgba(48, 48, 57, 0.1);
   backdrop-filter: blur(16px);
 }
 
@@ -491,7 +386,7 @@ button {
 }
 
 .gallery-section {
-  padding: 90px 0 100px;
+  padding: 70px 0 80px;
 }
 
 .section-heading {
@@ -775,14 +670,6 @@ footer strong {
 
   .site-header {
     height: 76px;
-  }
-
-  .online-status {
-    padding: 8px 10px;
-  }
-
-  .online-status span {
-    display: none;
   }
 
   .hero {

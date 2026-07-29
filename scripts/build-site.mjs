@@ -168,6 +168,14 @@ for (const date of dates) {
 
   entries.push({
     date,
+    cumulativeRange: matchingRange
+      ? {
+          startDate: matchingRange.startDate,
+          endDate: matchingRange.endDate,
+        }
+      : cumulativeFigures.length > 0
+        ? { startDate: date, endDate: date }
+        : null,
     daily: dailyFigures,
     cumulative: cumulativeFigures,
   });
@@ -179,6 +187,7 @@ const publicData = {
   generatedAt,
   dates: entries.map((entry) => ({
     date: entry.date,
+    cumulativeRange: entry.cumulativeRange,
     daily: entry.daily.map(({ sourcePath, ...figure }) => ({
       ...figure,
       src: `${publicImageRoot}/${sourcePath}`,

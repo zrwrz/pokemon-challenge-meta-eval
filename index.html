@@ -36,10 +36,6 @@
             <small>META DECKS</small>
           </span>
         </a>
-        <div class="online-status">
-          <i aria-hidden="true"></i>
-          <span>Gallery online</span>
-        </div>
       </header>
 
       <main>
@@ -55,11 +51,7 @@
 
           <div class="hero-art" aria-hidden="true">
             <div class="orbit orbit--outer"></div>
-            <div class="orbit orbit--inner"></div>
             <span class="pokeball pokeball--hero"></span>
-            <i class="spark spark--one"></i>
-            <i class="spark spark--two"></i>
-            <i class="spark spark--three"></i>
           </div>
         </section>
 
@@ -72,7 +64,7 @@
             <div class="mode-switch" role="group" aria-label="Report mode">
               <button class="mode-button" type="button" data-mode="cumulative">
                 <span>Cumulative</span>
-                <small>Through selected date</small>
+                <small>Date range</small>
               </button>
               <button
                 class="mode-button is-active"
@@ -88,7 +80,7 @@
 
           <div class="date-picker">
             <div class="date-title">
-              <span>Selected date</span>
+              <span id="dateContextLabel">Selected date</span>
               <strong id="selectedDateLabel">Loading…</strong>
             </div>
             <label class="select-label">
