@@ -2,7 +2,7 @@
 
 **PokéMeta** is an independent, static meta-analysis dashboard for the [Pokémon TCG AI Battle Challenge Simulation](https://www.kaggle.com/competitions/pokemon-tcg-ai-battle/overview) on Kaggle. It turns completed battle episodes into daily and rolling-window views of deck usage, performance, matchups, and counters.
 
-[Open the live dashboard](https://zrwrz.github.io/pokemon-challenge-meta-analysis/) · [View the Kaggle competition](https://www.kaggle.com/competitions/pokemon-tcg-ai-battle/overview) · [Read the simulator API documentation](https://matsuoinstitute.github.io/cabt/)
+[Open the live dashboard](https://zrwrz.github.io/pokemon-challenge-meta-eval/) · [View the Kaggle competition](https://www.kaggle.com/competitions/pokemon-tcg-ai-battle/overview) · [Read the simulator API documentation](https://matsuoinstitute.github.io/cabt/)
 
 > This is a community research and visualization project. It is not the official Kaggle evaluation service, leaderboard, or skill-rating implementation.
 
